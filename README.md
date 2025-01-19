@@ -116,6 +116,12 @@ poetry run isort .
 poetry run mypy .
 ```
 
+### Git Hooks
+
+This project uses Husky to manage Git hooks:
+
+- **Pre-push**: Runs all tests (`poetry run pytest tests/`) before allowing a push to proceed. The push will be rejected if any tests fail.
+
 ### Contributing
 
 1. Fork the repository

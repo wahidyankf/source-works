@@ -1,5 +1,5 @@
 {
-  "name": "research-assistant",
+  "name": "source-works",
   "version": "0.1.0",
   "description": "Research assistant tools including PDF merger",
   "scripts": {
@@ -12,8 +12,12 @@
     "clean": "find . -type f -name 'merged_pdfs*.pdf' -delete",
     "lint": "poetry run black .",
     "format": "poetry run black . && poetry run isort .",
-    "type-check": "poetry run mypy ."
+    "type-check": "poetry run mypy .",
+    "prepare": "husky"
   },
   "author": "Wahidyan Kresna Fridayoka <wahidyankf@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "husky": "^9.0.7"
+  }
 }
