@@ -1,4 +1,4 @@
-# Research Assistant
+# Source Works
 
 A Python-based tool for merging PDF files with automatic table of contents generation. Designed to help researchers and students organize their research papers and documents.
 
@@ -67,7 +67,7 @@ poetry run python cli.py --help
 
 ```
 source-works/
-├── ra_core/           # Core functionality
+├── sw_core/           # Core functionality
 │   ├── __init__.py
 │   └── main.py       # Main PDF merging logic
 ├── tests/            # Test suite

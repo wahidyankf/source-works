@@ -7,7 +7,7 @@ import pytest
 from pypdf import PdfReader
 from reportlab.pdfgen import canvas
 
-from ra_core.main import (
+from sw_core.main import (
     create_toc_page,
     create_title_page,
     get_unique_filename,
