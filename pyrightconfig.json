@@ -1,0 +1,18 @@
+{
+  "include": [
+    "sw_core",
+    "tests",
+    "cli.py"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.pytest_cache"
+  ],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "strict",
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "reportUnknownMemberType": false,
+  "useLibraryCodeForTypes": true
+}

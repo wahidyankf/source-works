@@ -113,7 +113,7 @@ poetry run black .
 poetry run isort .
 
 # Type checking
-poetry run mypy .
+npm run type-check
 ```
 
 ### Git Hooks
