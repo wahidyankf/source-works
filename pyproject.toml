@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "research-assistant"
+version = "0.1.0"
+description = ""
+authors = ["Wahidyan Kresna Fridayoka <wahidyankf@gmail.com>"]
+readme = "README.md"
+packages = [{include = "ra_core"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+reportlab = "^4.0.8"
+pypdf = "^4.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.1.0"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+pytest-watch = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true

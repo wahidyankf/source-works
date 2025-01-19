@@ -1,0 +1,19 @@
+{
+  "name": "research-assistant",
+  "version": "0.1.0",
+  "description": "Research assistant tools including PDF merger",
+  "scripts": {
+    "install": "poetry install",
+    "update": "poetry update",
+    "test": "poetry run pytest tests/ -v",
+    "test:watch": "poetry run pytest tests/ -v --watch",
+    "merge-pdf": "poetry run ./cli.py --merge-pdf",
+    "merge-pdf:test": "poetry run ./cli.py --merge-pdf -dir ./test-data",
+    "clean": "find . -type f -name 'merged_pdfs*.pdf' -delete",
+    "lint": "poetry run black .",
+    "format": "poetry run black . && poetry run isort .",
+    "type-check": "poetry run mypy ."
+  },
+  "author": "Wahidyan Kresna Fridayoka <wahidyankf@gmail.com>",
+  "license": "MIT"
+}
