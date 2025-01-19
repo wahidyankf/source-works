@@ -37,3 +37,4 @@ merged_pdfs.pdf
 __pycache__
 .pytest_cache
 test-data
+.mypy_cache
