@@ -225,6 +225,10 @@ def merge(input_dir: Path, output_name: str = "merged_pdfs.pdf") -> Optional[Pat
     Merge all PDFs in the input directory into a single PDF with a table of contents.
     Returns the path to the merged PDF file, or None if no PDFs were found.
     """
+    # Ensure output_name ends with .pdf
+    if not output_name.lower().endswith('.pdf'):
+        output_name = f"{output_name}.pdf"
+
     # Get list of PDF files
     pdf_files: List[Path] = sorted([f for f in input_dir.glob(
         "*.pdf") if f.name != output_name and not f.name.startswith('merged_pdfs')])

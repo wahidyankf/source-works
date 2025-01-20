@@ -551,3 +551,21 @@ def test_toc_formatting_consistency(pdf_reader: Callable[[str], Tuple[List[str],
 
     # Clean up
     os.unlink(toc_path)
+
+
+def test_merge_output_name_without_extension(temp_dir: Path, sample_pdf: str) -> None:
+    """Test merging PDFs with output name that doesn't have .pdf extension."""
+    # Copy sample PDF to test directory
+    with open(sample_pdf, 'rb') as src:
+        file = temp_dir / "test.pdf"
+        with open(file, 'wb') as dst:
+            dst.write(src.read())
+
+    # Merge PDFs with output name without .pdf extension
+    output_name = "merged_output"
+    merged_path = pdf_module.merge(temp_dir, output_name)
+    assert merged_path is not None
+
+    # Check that the output file exists with .pdf extension
+    assert (temp_dir / f"{output_name}.pdf").exists()
+    assert merged_path.name == f"{output_name}.pdf"
