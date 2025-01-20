@@ -1,5 +1,7 @@
 # Source Works
 
+[![Tests](https://github.com/wahidyankf/source-works/actions/workflows/test.yml/badge.svg)](https://github.com/wahidyankf/source-works/actions/workflows/test.yml)
+
 A Python-based tool for merging PDF files with automatic table of contents generation. Designed to help researchers and students organize their research papers and documents.
 
 ## Features
