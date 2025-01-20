@@ -35,12 +35,14 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install Python dependencies
-        run: |
-          poetry install --no-interaction
-
       - name: Install Node.js dependencies
         run: npm ci
+
+      - name: Install Python dependencies
+        run: npm run install
+
+      - name: Check formatting
+        run: npm run format
 
       - name: Run tests
         run: npm test
