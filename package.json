@@ -5,7 +5,7 @@
   "scripts": {
     "install": "poetry install",
     "update": "poetry update",
-    "test": "poetry run pytest tests/ -v",
+    "test": "poetry run pytest tests/ -v && pyright",
     "test:watch": "poetry run pytest tests/ -v --watch",
     "merge-pdf": "poetry run ./cli.py --merge-pdf",
     "merge-pdf:test": "poetry run ./cli.py --merge-pdf -dir ./test-data",
