@@ -19,21 +19,21 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: '1.7.1'
+          version: "1.7.1"
           virtualenvs-create: true
           virtualenvs-in-project: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install Python dependencies
         run: |
@@ -42,10 +42,7 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
-      - name: Run Python tests
-        run: poetry run pytest tests/ -v
-
-      - name: Run Node.js tests
+      - name: Run tests
         run: npm test
 
       - name: Upload test results

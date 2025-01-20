@@ -677,13 +677,15 @@ def test_page_number_calculation(temp_dir: Path, multi_page_pdf: str) -> None:
         # Check TOC page numbers
         toc_text = pdf.pages[0].extract_text()
         for i, start_page in enumerate(expected_starts):
-            assert str(start_page) in toc_text, f"Document {i+1} should start at page {start_page}"
+            assert str(start_page) in toc_text, f"Document {
+                i+1} should start at page {start_page}"
 
         # Check actual page numbers at bottom
         for i, page in enumerate(pdf.pages):
             page_text = page.extract_text()
             expected_page = f"Page {i + 1} of {len(pdf.pages)}"
-            assert expected_page in page_text, f"Page {i+1} should show '{expected_page}' at bottom"
+            assert expected_page in page_text, f"Page {
+                i+1} should show '{expected_page}' at bottom"
 
 
 def test_toc_line_wrapping(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
@@ -808,7 +810,8 @@ def test_toc_formatting_consistency(pdf_reader: Callable[[str], Tuple[List[str],
     for filename, page_num in zip(filenames, page_numbers):
         base_name = os.path.splitext(filename)[0]
         assert base_name in text, f"Entry for {base_name} should be present"
-        assert str(page_num) in text, f"Page number {page_num} should be present"
+        assert str(page_num) in text, f"Page number {
+            page_num} should be present"
         assert "." in text, "Should have some form of visual separator"
 
     # Clean up
