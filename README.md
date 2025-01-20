@@ -146,6 +146,28 @@ Pre-configured Git hooks using Husky:
 - **Pre-push**: Runs test suite
 - **Pre-commit**: Runs code formatting
 
+### Continuous Integration
+
+The project uses GitHub Actions for continuous integration:
+
+- **Automated Testing**:
+  - Runs on every push to main branch
+  - Runs on every pull request
+  - Tests both Python and Node.js code
+  - Uploads test results as artifacts
+
+- **Environment**:
+  - Python 3.12 with Poetry
+  - Node.js 20.x with Yarn
+  - Ubuntu latest runner
+
+- **Test Artifacts**:
+  - Test results
+  - Coverage reports
+  - Available for 7 days
+
+View the workflow status and test results in the [Actions tab](../../actions) of the repository.
+
 ### Contributing
 
 1. Fork the repository
