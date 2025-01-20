@@ -31,7 +31,7 @@ Implementation Notes:
 import argparse
 from pathlib import Path
 
-from sw_core import domains
+from sourcerer_core import domains
 
 
 def main() -> None:

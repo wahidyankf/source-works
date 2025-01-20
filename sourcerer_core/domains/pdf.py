@@ -12,7 +12,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfgen import canvas
 
-from sw_core.domains import files
+from sourcerer_core.domains import files
 
 
 def get_string_width(text: str, font_name: str, font_size: int, encoding: str = "utf8") -> float:

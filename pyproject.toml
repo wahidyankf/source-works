@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "source-works"
+name = "sourcerer"
 version = "0.1.0"
 description = ""
 authors = ["Wahidyan Kresna Fridayoka <wahidyankf@gmail.com>"]
 readme = "README.md"
-packages = [{include = "sw_core"}]
+packages = [{ include = "sourcerer_core" }]
 
 [tool.poetry.dependencies]
 python = "^3.12"

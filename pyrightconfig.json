@@ -1,6 +1,6 @@
 {
   "include": [
-    "sw_core",
+    "sourcerer_core",
     "tests",
     "cli.py"
   ],
@@ -14,5 +14,6 @@
   "reportMissingImports": true,
   "reportMissingTypeStubs": false,
   "reportUnknownMemberType": false,
-  "useLibraryCodeForTypes": true
+  "useLibraryCodeForTypes": true,
+  "pythonPlatform": "Darwin"
 }

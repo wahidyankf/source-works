@@ -1,6 +1,6 @@
-# Source Works
+# Sourcerer
 
-[![Unit Tests](https://github.com/wahidyankf/source-works/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wahidyankf/source-works/actions/workflows/test.yml)
+[![Unit Tests](https://github.com/wahidyankf/sourcerer/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/wahidyankf/sourcerer/actions/workflows/test.yml)
 
 A Python-based tool for merging PDF files with automatic table of contents generation. Designed to help researchers and students organize their research papers and documents.
 
@@ -27,8 +27,8 @@ A Python-based tool for merging PDF files with automatic table of contents gener
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/wahidyankf/source-works.git
-   cd source-works
+   git clone https://github.com/wahidyankf/sourcerer.git
+   cd sourcerer
    ```
 
 2. Install dependencies:

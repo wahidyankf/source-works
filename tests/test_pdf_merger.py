@@ -42,9 +42,9 @@ from _pytest.fixtures import FixtureRequest
 from pypdf import PdfReader
 from reportlab.pdfgen import canvas
 
-from sw_core.domains import pdf as pdf_module
-from sw_core.domains.files import get_unique_filename
-from sw_core.domains.pdf import create_title_page, create_toc_page
+from sourcerer_core.domains import pdf as pdf_module
+from sourcerer_core.domains.files import get_unique_filename
+from sourcerer_core.domains.pdf import create_title_page, create_toc_page
 
 
 # ============================================================================
@@ -557,7 +557,7 @@ def test_merge_pdfs_single_file(temp_dir: Path, sample_pdf: str) -> None:
     # Should have 3 pages: TOC, title page, and content
     assert len(reader.pages) == 3
 
-    # Check TOC
+    # Check if TOC includes all filenames (without extension)
     toc_text = reader.pages[0].extract_text()
     assert "Table of Contents" in toc_text
     # Check for filename without extension

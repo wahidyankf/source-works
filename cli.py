@@ -4,7 +4,7 @@ Source Works PDF Merger Command Line Interface Entry Point
 
 This module serves as the primary entry point for the Source Works PDF merger tool
 when installed as a command-line application. It provides a thin wrapper around
-the main application logic defined in sw_core.main.
+the main application logic defined in sourcerer_core.main.
 
 The module follows the common Python pattern of providing a simple CLI entry point
 that delegates to the actual implementation. This separation allows the core
@@ -22,11 +22,11 @@ Installation:
 
 Implementation Notes:
     - Uses the standard Python idiom for script execution
-    - Delegates all functionality to sw_core.main
+    - Delegates all functionality to sourcerer_core.main
     - Maintains clean separation between CLI entry point and core logic
 """
 
-from sw_core.main import main
+from sourcerer_core.main import main
 
 # Standard Python idiom to ensure the script only runs when executed directly
 if __name__ == "__main__":
