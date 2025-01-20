@@ -45,7 +45,7 @@ jobs:
         run: npm run format
 
       - name: Run tests
-        run: npm test
+        run: poetry run pytest tests/ -v
         env:
           PYTHONPATH: ${{ github.workspace }}
 
