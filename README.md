@@ -112,9 +112,17 @@ poetry run black .
 # Sort imports
 poetry run isort .
 
-# Type checking
+# Type checking (strict mode)
 npm run type-check
 ```
+
+The project enforces strict type checking using Pyright with the following features:
+
+- Strict type checking mode enabled
+- Complete type coverage for all functions
+- Type-safe wrappers for third-party libraries where needed
+- No implicit any types allowed
+- Comprehensive type hints for function parameters and return values
 
 ### Git Hooks
 
