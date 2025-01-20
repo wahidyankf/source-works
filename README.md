@@ -14,18 +14,31 @@ A Python-based tool for merging PDF files with automatic table of contents gener
 - Support for long filenames with proper wrapping
 - Automatic page numbering
 
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/wahidyankf/sourcerer.git
+   cd sourcerer
+   ```
+
+2. Install dependencies using Poetry:
+   ```bash
+   poetry install
+   ```
+
 ## Usage
 
-Once installed, you can use Sourcerer from the command line to merge PDF files:
+You can use Sourcerer through Poetry to merge PDF files:
 
 ### Basic Usage
 
 ```bash
 # Merge PDFs in a directory with default output name (merged_pdfs.pdf)
-sourcerer --merge-pdf -dir /path/to/pdfs
+poetry run python cli.py --merge-pdf -dir /path/to/pdfs
 
 # Merge PDFs with a custom output filename
-sourcerer --merge-pdf -dir /path/to/pdfs -n custom_output.pdf
+poetry run python cli.py --merge-pdf -dir /path/to/pdfs -n custom_output.pdf
 ```
 
 ### Command Line Options
@@ -46,7 +59,7 @@ sourcerer --merge-pdf -dir /path/to/pdfs -n custom_output.pdf
 
 2. Run Sourcerer:
    ```bash
-   sourcerer --merge-pdf -dir ./research_papers -n research_collection.pdf
+   poetry run python cli.py --merge-pdf -dir ./research_papers -n research_collection.pdf
    ```
 
 3. The output will be a single PDF file (`research_collection.pdf`) containing:
