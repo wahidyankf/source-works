@@ -4,15 +4,25 @@ A Python-based tool for merging PDF files with automatic table of contents gener
 
 ## Features
 
-- **Automatic Table of Contents**: Generates a clean, professional table of contents with page numbers
-- **Title Pages**: Creates title pages for each document with customizable formatting
-- **PDF Bookmarks**: Adds navigable bookmarks for easy document traversal
-- **Clean Formatting**: Consistent and modern document styling
+- **Automatic Table of Contents**:
+  - Professional layout with page numbers
+  - Intelligent text wrapping for long titles
+  - Consistent formatting and spacing
+  - Dot leaders for visual clarity
+- **Title Pages**:
+  - Dynamically sized text based on content
+  - Centered layout with proper margins
+  - Professional typography
+- **PDF Processing**:
+  - Page numbering throughout document
+  - Navigable bookmarks
+  - Original content preservation
+  - Robust error handling
 - **Smart File Handling**:
-  - Handles duplicate filenames
-  - Preserves original document content
-  - Skips non-PDF files automatically
-  - Supports special characters in filenames
+  - Duplicate filename detection
+  - Special character support
+  - Non-PDF file filtering
+  - Temporary file cleanup
 
 ## Installation
 
@@ -34,11 +44,14 @@ poetry install
 The tool can be used via command line:
 
 ```bash
-# Merge all PDFs in a directory
-poetry run python -m sw_core merge ./path/to/pdfs --name output.pdf
+# Basic usage - merge all PDFs in a directory
+poetry run python cli.py merge -dir /path/to/pdfs
+
+# Specify custom output filename
+poetry run python cli.py merge -dir /path/to/pdfs -n output.pdf
 
 # Get help
-poetry run python -m sw_core --help
+poetry run python cli.py --help
 ```
 
 ## Development
@@ -47,63 +60,65 @@ poetry run python -m sw_core --help
 
 - Python 3.12+
 - Poetry for dependency management
-
-### Dependencies
-
-#### Main Dependencies
-
-- PyPDF (^4.0.1) for PDF manipulation
-- reportlab (^4.0.8) for PDF generation
-
-#### Development Dependencies
-
-- pytest (^8.0.0) for testing
-- black (^24.1.0) for code formatting
-- isort (^5.13.2) for import sorting
-- mypy (^1.8.0) for type checking
-- pytest-watch (^4.2.0) for test watching
+- Node.js (for development tools)
 
 ### Project Structure
 
 ```
 source-works/
-├── sw_core/           # Core functionality
-│   ├── __init__.py
-│   └── main.py       # Main PDF merging logic
-├── tests/            # Test suite
+├── sw_core/                # Core functionality
+│   ├── domains/           # Domain-specific modules
+│   │   ├── pdf.py        # PDF processing logic
+│   │   └── files.py      # File handling utilities
+│   └── main.py           # Main application logic
+├── tests/                 # Test suite
 │   └── test_pdf_merger.py
-├── cli.py           # Command line interface
-├── create_test_pdfs.py  # Utility for creating test PDFs
-├── pyproject.toml   # Project configuration
-└── README.md        # Documentation
+├── cli.py                # Command line interface
+├── pyproject.toml        # Project configuration
+├── pyrightconfig.json    # Type checking configuration
+└── README.md            # Documentation
 ```
+
+### Dependencies
+
+#### Main Dependencies
+
+- PyPDF (^4.0.1): PDF manipulation
+- reportlab (^4.0.8): PDF generation and styling
+
+#### Development Dependencies
+
+- pytest (^8.0.0): Testing framework
+- black (^24.1.0): Code formatting
+- isort (^5.13.2): Import sorting
+- mypy (^1.8.0): Static type checking
+- pytest-watch (^4.2.0): Continuous testing
 
 ### Testing
 
-The project includes a comprehensive test suite covering:
-
-- Basic functionality
-- Edge cases
-- Error handling
-- File content preservation
-- File naming
-- Directory cleanup
-
-Run tests with:
+Run the comprehensive test suite:
 
 ```bash
+# Run all tests
 poetry run pytest tests/ -v
-```
 
-For continuous test running during development:
-
-```bash
+# Watch mode for development
 poetry run ptw
 ```
 
+The test suite covers:
+
+- Core PDF merging functionality
+- Table of contents generation
+- Title page creation
+- File handling edge cases
+- Error scenarios
+- Memory management
+- File cleanup
+
 ### Code Quality
 
-The project uses several tools to maintain code quality:
+Maintain code quality with provided tools:
 
 ```bash
 # Format code
@@ -112,31 +127,33 @@ poetry run black .
 # Sort imports
 poetry run isort .
 
-# Type checking (strict mode)
-npm run type-check
+# Type checking
+poetry run mypy .
 ```
 
-The project enforces strict type checking using Pyright with the following features:
+Type checking features:
 
-- Strict type checking mode enabled
-- Complete type coverage for all functions
-- Type-safe wrappers for third-party libraries where needed
-- No implicit any types allowed
-- Comprehensive type hints for function parameters and return values
+- Strict mode enabled
+- No implicit any types
+- Complete function signatures
+- Comprehensive type hints
+- Third-party library type safety
 
 ### Git Hooks
 
-This project uses Husky to manage Git hooks:
+Pre-configured Git hooks using Husky:
 
-- **Pre-push**: Runs all tests (`poetry run pytest tests/`) before allowing a push to proceed. The push will be rejected if any tests fail.
+- **Pre-push**: Runs test suite
+- **Pre-commit**: Runs code formatting
 
 ### Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests for any new functionality
-5. Submit a pull request
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
 
 ## License
 

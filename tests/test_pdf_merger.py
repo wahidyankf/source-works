@@ -1,3 +1,36 @@
+"""
+Source Works PDF Merger Test Suite
+
+This module contains a comprehensive test suite for the Source Works PDF merger functionality.
+It tests all aspects of PDF manipulation including:
+- Table of Contents (TOC) generation
+- Title page creation
+- PDF merging
+- File handling
+- Edge cases and error conditions
+
+The test suite is organized into several sections:
+1. Fixtures: Reusable test components for creating test PDFs and directories
+2. TOC Tests: Verify table of contents generation and formatting
+3. Title Page Tests: Ensure correct title page creation
+4. File Handling Tests: Test filename generation and path handling
+5. PDF Merging Tests: Verify PDF combination functionality
+6. Integration Tests: Test complete workflow scenarios
+
+Test Fixtures:
+- sample_pdf: Creates a basic single-page PDF
+- sample_pdf_with_content: Creates a PDF with specific content
+- temp_dir: Provides a clean temporary directory
+- multi_page_pdf: Creates a PDF with multiple pages
+- pdf_reader: Provides a consistent way to read PDF content
+
+Implementation Notes:
+- Uses pytest for test framework
+- Employs temporary files and directories for isolation
+- Cleans up all temporary resources after tests
+- Provides detailed error messages for failures
+"""
+
 import os
 import re
 import tempfile
@@ -14,9 +47,24 @@ from sw_core.domains.files import get_unique_filename
 from sw_core.domains.pdf import create_title_page, create_toc_page
 
 
+# ============================================================================
+# Test Fixtures
+# ============================================================================
+
 @pytest.fixture
 def sample_pdf() -> Generator[str, None, None]:
-    """Create a sample PDF file for testing."""
+    """
+    Create a sample PDF file for testing.
+
+    This fixture creates a simple single-page PDF with basic content.
+    The file is automatically cleaned up after the test completes.
+
+    Returns:
+        Generator[str, None, None]: Path to the temporary PDF file.
+
+    Cleanup:
+        The temporary file is deleted after the test, regardless of test outcome.
+    """
     temp_file = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
     c = canvas.Canvas(temp_file.name)
     c.drawString(100, 750, "Test Content")
@@ -27,10 +75,26 @@ def sample_pdf() -> Generator[str, None, None]:
 
 @pytest.fixture
 def sample_pdf_with_content(request: FixtureRequest) -> Generator[str, None, None]:
-    """Create a sample PDF file with specific content."""
+    """
+    Create a sample PDF file with specific content.
+
+    This fixture creates a PDF file with content specified by the test parameter.
+    Useful for testing content preservation and specific text handling.
+
+    Args:
+        request: Pytest fixture request containing the content parameter.
+
+    Returns:
+        Generator[str, None, None]: Path to the temporary PDF file.
+
+    Example:
+        @pytest.mark.parametrize('sample_pdf_with_content', ['Test Content'], indirect=True)
+        def test_content(sample_pdf_with_content):
+            # Test with 'Test Content' in the PDF
+    """
     temp_file = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
     c = canvas.Canvas(temp_file.name)
-    c.drawString(100, 750, request.param)  # Use the parameter directly
+    c.drawString(100, 750, request.param)
     c.save()
     yield temp_file.name
     os.unlink(temp_file.name)
@@ -38,7 +102,19 @@ def sample_pdf_with_content(request: FixtureRequest) -> Generator[str, None, Non
 
 @pytest.fixture
 def temp_dir() -> Generator[Path, None, None]:
-    """Create a temporary directory for testing."""
+    """
+    Create a temporary directory for testing.
+
+    This fixture provides a clean, isolated directory for file operations.
+    All contents are automatically cleaned up after the test completes.
+
+    Returns:
+        Generator[Path, None, None]: Path to the temporary directory.
+
+    Cleanup:
+        The directory and all its contents are removed after the test,
+        regardless of test outcome.
+    """
     temp_dir = tempfile.mkdtemp()
     yield Path(temp_dir)
     # Clean up temp directory and its contents
@@ -50,11 +126,24 @@ def temp_dir() -> Generator[Path, None, None]:
 
 @pytest.fixture
 def multi_page_pdf() -> Generator[str, None, None]:
-    """Create a sample PDF file with multiple pages."""
+    """
+    Create a sample PDF file with multiple pages.
+
+    This fixture creates a PDF with three pages, each containing different content.
+    Useful for testing page number calculations and multi-page document handling.
+
+    Returns:
+        Generator[str, None, None]: Path to the temporary PDF file.
+
+    Content:
+        - Page 1: "Page 1"
+        - Page 2: "Page 2"
+        - Page 3: "Page 3"
+    """
     temp_file = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
     c = canvas.Canvas(temp_file.name)
 
-    # Add 3 pages
+    # Add 3 pages with sequential content
     for i in range(3):
         c.drawString(100, 750, f"Page {i+1}")
         c.showPage()
@@ -66,12 +155,32 @@ def multi_page_pdf() -> Generator[str, None, None]:
 
 @pytest.fixture
 def pdf_reader() -> Callable[[str], Tuple[List[str], int]]:
-    """Create a function to read PDF content.
+    """
+    Create a function to read PDF content.
 
-    This abstracts away the specific PDF library implementation.
+    This fixture provides a consistent interface for reading PDF content,
+    abstracting away the specific PDF library implementation details.
+
+    Returns:
+        Callable[[str], Tuple[List[str], int]]: Function that takes a filepath
+        and returns a tuple of (list of page contents, total page count).
+
+    Usage:
+        def test_pdf_content(pdf_reader):
+            content, page_count = pdf_reader('test.pdf')
     """
     def read_pdf(filepath: str) -> Tuple[List[str], int]:
-        """Read a PDF file and return its text content and page count."""
+        """
+        Read a PDF file and return its text content and page count.
+
+        Args:
+            filepath (str): Path to the PDF file to read.
+
+        Returns:
+            Tuple[List[str], int]: Tuple containing:
+                - List of strings, each string being the text content of a page
+                - Integer representing the total number of pages
+        """
         with open(filepath, 'rb') as file:
             reader = PdfReader(file)
             pages: List[str] = []
@@ -81,8 +190,21 @@ def pdf_reader() -> Callable[[str], Tuple[List[str], int]]:
     return read_pdf
 
 
+# ============================================================================
+# Table of Contents Tests
+# ============================================================================
+
 def test_create_toc_page(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
-    """Test creation of table of contents page."""
+    """
+    Test creation of table of contents page.
+
+    Verifies that:
+    1. TOC is created successfully
+    2. Contains the correct title
+    3. Lists all input files
+    4. Shows correct page numbers
+    5. File is properly cleaned up after test
+    """
     filenames = ["test1.pdf", "test2.pdf", "very_long_filename.pdf"]
     page_numbers = [2, 4, 6]
     toc_path = create_toc_page(filenames, page_numbers)
@@ -107,7 +229,14 @@ def test_create_toc_page(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> 
 
 
 def test_create_toc_page_empty_list(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
-    """Test TOC creation with empty file list."""
+    """
+    Test TOC creation with empty file list.
+
+    Verifies that:
+    1. TOC is created successfully
+    2. Contains the correct title
+    3. File is properly cleaned up after test
+    """
     toc_path = create_toc_page([], [])
 
     # Verify TOC was created
@@ -125,7 +254,14 @@ def test_create_toc_page_empty_list(pdf_reader: Callable[[str], Tuple[List[str],
 
 
 def test_create_toc_page_special_characters() -> None:
-    """Test TOC creation with filenames containing special characters."""
+    """
+    Test TOC creation with filenames containing special characters.
+
+    Verifies that:
+    1. TOC is created successfully
+    2. Filenames are preserved exactly as they appear
+    3. File is properly cleaned up after test
+    """
     filenames = ["test-1.pdf", "test_2.pdf", "test 3.pdf", "test@4.pdf"]
     page_numbers = [2, 4, 6, 8]
     toc_path = create_toc_page(filenames, page_numbers)
@@ -144,7 +280,14 @@ def test_create_toc_page_special_characters() -> None:
 
 
 def test_create_toc_page_long_filename() -> None:
-    """Test that TOC properly wraps long filenames."""
+    """
+    Test that TOC properly wraps long filenames.
+
+    Verifies that:
+    1. TOC is created successfully
+    2. Long filename is wrapped to multiple lines
+    3. File is properly cleaned up after test
+    """
     # Create a very long filename that should wrap
     long_filename = "This is a very long filename that should definitely wrap to the next line because it exceeds the maximum width of a single line in our table of contents.pdf"
     short_filename = "short_file.pdf"
@@ -165,7 +308,14 @@ def test_create_toc_page_long_filename() -> None:
 
 
 def test_create_title_page() -> None:
-    """Test creation of title page."""
+    """
+    Test creation of title page.
+
+    Verifies that:
+    1. Title page is created successfully
+    2. Contains the correct title
+    3. File is properly cleaned up after test
+    """
     filename = "test_document.pdf"
     title_path = create_title_page(filename)
 
@@ -187,7 +337,14 @@ def test_create_title_page() -> None:
 
 
 def test_create_title_page_long_filename() -> None:
-    """Test title page creation with a very long filename."""
+    """
+    Test title page creation with a very long filename.
+
+    Verifies that:
+    1. Title page is created successfully
+    2. Contains the correct title
+    3. File is properly cleaned up after test
+    """
     long_filename = "a" * 100 + ".pdf"  # 100 character filename
     title_path = create_title_page(long_filename)
     try:
@@ -201,7 +358,14 @@ def test_create_title_page_long_filename() -> None:
 
 
 def test_create_title_page_special_characters() -> None:
-    """Test title page creation with special characters in filename."""
+    """
+    Test title page creation with special characters in filename.
+
+    Verifies that:
+    1. Title page is created successfully
+    2. Contains the correct title
+    3. File is properly cleaned up after test
+    """
     filename = "test@#$%^&*()_+.pdf"
     title_path = create_title_page(filename)
     try:
@@ -214,7 +378,14 @@ def test_create_title_page_special_characters() -> None:
 
 
 def test_get_unique_filename(temp_dir: Path) -> None:
-    """Test unique filename generation."""
+    """
+    Test unique filename generation.
+
+    Verifies that:
+    1. Unique filename is generated for non-existing file
+    2. Unique filename is generated for existing file
+    3. File is properly cleaned up after test
+    """
     # Test with non-existing file
     assert get_unique_filename(temp_dir, "test.pdf") == "test.pdf"
 
@@ -228,7 +399,14 @@ def test_get_unique_filename(temp_dir: Path) -> None:
 
 
 def test_get_unique_filename_special_characters(temp_dir: Path) -> None:
-    """Test unique filename generation with special characters."""
+    """
+    Test unique filename generation with special characters.
+
+    Verifies that:
+    1. Unique filename is generated for non-existing file
+    2. Unique filename is generated for existing file
+    3. File is properly cleaned up after test
+    """
     filename = "test@#$%^&*()_+.pdf"
     assert get_unique_filename(temp_dir, filename) == filename
 
@@ -238,14 +416,29 @@ def test_get_unique_filename_special_characters(temp_dir: Path) -> None:
 
 
 def test_get_unique_filename_no_extension(temp_dir: Path) -> None:
-    """Test unique filename generation without file extension."""
+    """
+    Test unique filename generation without file extension.
+
+    Verifies that:
+    1. Unique filename is generated for non-existing file
+    2. Unique filename is generated for existing file
+    3. File is properly cleaned up after test
+    """
     assert get_unique_filename(temp_dir, "test") == "test"
     (temp_dir / "test").touch()
     assert get_unique_filename(temp_dir, "test") == "test_1"
 
 
 def test_merge_pdfs(temp_dir: Path, sample_pdf: str) -> None:
-    """Test PDF merging functionality."""
+    """
+    Test PDF merging functionality.
+
+    Verifies that:
+    1. PDFs are merged successfully
+    2. Merged PDF contains all input files
+    3. Merged PDF has correct page count
+    4. File is properly cleaned up after test
+    """
     # Create test PDFs
     pdf_names = ["doc1.pdf", "doc2.pdf", "doc3.pdf"]
     for name in pdf_names:
@@ -285,7 +478,15 @@ def test_merge_pdfs_content_preservation(
     sample_pdf_with_content: str,
     request: pytest.FixtureRequest,
 ) -> None:
-    """Test that PDF content is preserved during merging."""
+    """
+    Test that PDF content is preserved during merging.
+
+    Verifies that:
+    1. PDF content is preserved
+    2. Merged PDF contains all input files
+    3. Merged PDF has correct page count
+    4. File is properly cleaned up after test
+    """
     # Create a PDF with specific content
     dest = temp_dir / "test.pdf"
     with open(dest, 'wb') as file, open(sample_pdf_with_content, 'rb') as src:
@@ -319,13 +520,27 @@ def test_merge_pdfs_content_preservation(
 
 
 def test_merge_pdfs_no_files(temp_dir: Path) -> None:
-    """Test PDF merging with no input files."""
+    """
+    Test PDF merging with no input files.
+
+    Verifies that:
+    1. No PDF is created
+    2. Function returns None
+    """
     merged_path = pdf_module.merge(temp_dir, "merged.pdf")
     assert merged_path is None
 
 
 def test_merge_pdfs_single_file(temp_dir: Path, sample_pdf: str) -> None:
-    """Test PDF merging with a single input file."""
+    """
+    Test PDF merging with a single input file.
+
+    Verifies that:
+    1. PDF is created successfully
+    2. Merged PDF contains the input file
+    3. Merged PDF has correct page count
+    4. File is properly cleaned up after test
+    """
     # Create one test PDF
     pdf_name = "single.pdf"
     dest = temp_dir / pdf_name
@@ -354,7 +569,14 @@ def test_merge_pdfs_single_file(temp_dir: Path, sample_pdf: str) -> None:
 
 
 def test_merge_pdfs_duplicate_filenames(temp_dir: Path, sample_pdf: str) -> None:
-    """Test merging PDFs with duplicate output filename."""
+    """
+    Test merging PDFs with duplicate output filename.
+
+    Verifies that:
+    1. PDF is created successfully
+    2. Merged PDF has a unique filename
+    3. File is properly cleaned up after test
+    """
     # Create a test PDF
     pdf_name = "test.pdf"
     dest = temp_dir / pdf_name
@@ -377,7 +599,14 @@ def test_merge_pdfs_duplicate_filenames(temp_dir: Path, sample_pdf: str) -> None
 
 
 def test_merge_pdfs_non_pdf_files(temp_dir: Path, sample_pdf: str) -> None:
-    """Test merging with non-PDF files in directory."""
+    """
+    Test merging with non-PDF files in directory.
+
+    Verifies that:
+    1. PDF is created successfully
+    2. Merged PDF only includes PDF files
+    3. File is properly cleaned up after test
+    """
     # Create a PDF file
     dest = temp_dir / "test.pdf"
     with open(sample_pdf, 'rb') as src, open(dest, 'wb') as dst:
@@ -400,7 +629,14 @@ def test_merge_pdfs_non_pdf_files(temp_dir: Path, sample_pdf: str) -> None:
 
 
 def test_page_number_calculation(temp_dir: Path, multi_page_pdf: str) -> None:
-    """Test that page numbers in TOC match actual page numbers."""
+    """
+    Test that page numbers in TOC match actual page numbers.
+
+    Verifies that:
+    1. Page numbers are correct
+    2. TOC is created successfully
+    3. File is properly cleaned up after test
+    """
     # Create test directory structure
     test_pdfs = []
     page_counts = [3, 2, 4]  # Define page counts for test PDFs
@@ -441,19 +677,24 @@ def test_page_number_calculation(temp_dir: Path, multi_page_pdf: str) -> None:
         # Check TOC page numbers
         toc_text = pdf.pages[0].extract_text()
         for i, start_page in enumerate(expected_starts):
-            assert str(start_page) in toc_text, f"Document {
-                i+1} should start at page {start_page}"
+            assert str(start_page) in toc_text, f"Document {i+1} should start at page {start_page}"
 
         # Check actual page numbers at bottom
         for i, page in enumerate(pdf.pages):
             page_text = page.extract_text()
             expected_page = f"Page {i + 1} of {len(pdf.pages)}"
-            assert expected_page in page_text, f"Page {
-                i+1} should show '{expected_page}' at bottom"
+            assert expected_page in page_text, f"Page {i+1} should show '{expected_page}' at bottom"
 
 
 def test_toc_line_wrapping(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
-    """Test that long filenames are properly wrapped in TOC."""
+    """
+    Test that long filenames are properly wrapped in TOC.
+
+    Verifies that:
+    1. Long filename is wrapped to multiple lines
+    2. TOC is created successfully
+    3. File is properly cleaned up after test
+    """
     # Create a very long filename that should wrap
     long_filename = "This_is_a_very_long_filename_that_should_definitely_wrap_to_multiple_lines_in_the_table_of_contents.pdf"
     filenames = [long_filename]
@@ -484,7 +725,14 @@ def test_toc_line_wrapping(pdf_reader: Callable[[str], Tuple[List[str], int]]) -
 
 
 def test_toc_dot_leaders(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
-    """Test that dot leaders are present in TOC."""
+    """
+    Test that dot leaders are present in TOC.
+
+    Verifies that:
+    1. Dot leaders are present
+    2. TOC is created successfully
+    3. File is properly cleaned up after test
+    """
     filename = "test_document.pdf"
     page_number = 42
 
@@ -505,7 +753,15 @@ def test_toc_dot_leaders(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> 
 
 
 def test_toc_multiple_pages(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
-    """Test that TOC properly handles multiple pages."""
+    """
+    Test that TOC properly handles multiple pages.
+
+    Verifies that:
+    1. TOC spans multiple pages
+    2. Each page has content
+    3. TOC is created successfully
+    4. File is properly cleaned up after test
+    """
     # Create enough entries to force multiple pages
     filenames = [f"test_document_{i}.pdf" for i in range(50)]
     page_numbers = list(range(1, 51))
@@ -530,7 +786,14 @@ def test_toc_multiple_pages(pdf_reader: Callable[[str], Tuple[List[str], int]]) 
 
 
 def test_toc_formatting_consistency(pdf_reader: Callable[[str], Tuple[List[str], int]]) -> None:
-    """Test that TOC entries are consistently formatted."""
+    """
+    Test that TOC entries are consistently formatted.
+
+    Verifies that:
+    1. TOC entries are consistently formatted
+    2. TOC is created successfully
+    3. File is properly cleaned up after test
+    """
     filenames = ["doc1.pdf", "doc2.pdf", "doc3.pdf"]
     page_numbers = [1, 10, 100]
 
@@ -545,8 +808,7 @@ def test_toc_formatting_consistency(pdf_reader: Callable[[str], Tuple[List[str],
     for filename, page_num in zip(filenames, page_numbers):
         base_name = os.path.splitext(filename)[0]
         assert base_name in text, f"Entry for {base_name} should be present"
-        assert str(page_num) in text, f"Page number {
-            page_num} should be present"
+        assert str(page_num) in text, f"Page number {page_num} should be present"
         assert "." in text, "Should have some form of visual separator"
 
     # Clean up
@@ -554,7 +816,14 @@ def test_toc_formatting_consistency(pdf_reader: Callable[[str], Tuple[List[str],
 
 
 def test_merge_output_name_without_extension(temp_dir: Path, sample_pdf: str) -> None:
-    """Test merging PDFs with output name that doesn't have .pdf extension."""
+    """
+    Test merging PDFs with output name that doesn't have .pdf extension.
+
+    Verifies that:
+    1. PDF is created successfully
+    2. Output file has .pdf extension
+    3. File is properly cleaned up after test
+    """
     # Copy sample PDF to test directory
     with open(sample_pdf, 'rb') as src:
         file = temp_dir / "test.pdf"
