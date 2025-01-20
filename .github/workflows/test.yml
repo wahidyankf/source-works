@@ -39,18 +39,13 @@ jobs:
         run: npm ci
 
       - name: Install Python dependencies
-        run: |
-          npm run install
-          poetry run pip install types-PyPDF2 types-reportlab
+        run: npm run install
 
       - name: Check formatting
         run: npm run format
 
-      - name: Run Python tests
-        run: poetry run pytest tests/ -v
-
-      - name: Run type checking
-        run: poetry run pyright
+      - name: Run tests
+        run: npm test
         env:
           PYTHONPATH: ${{ github.workspace }}
 
