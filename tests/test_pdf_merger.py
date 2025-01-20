@@ -2,18 +2,16 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, List, Tuple, Callable, Generator
+from typing import Any, Callable, Generator, List, Tuple
+
+import pytest
 from _pytest.fixtures import FixtureRequest
 from pypdf import PdfReader
-import pytest
 from reportlab.pdfgen import canvas
 
-from sw_core.pdf import (
-    create_toc_page,
-    create_title_page,
-    get_unique_filename,
-    merge_pdfs
-)
+from sw_core.domains import pdf as pdf_module
+from sw_core.domains.files import get_unique_filename
+from sw_core.domains.pdf import create_title_page, create_toc_page
 
 
 @pytest.fixture
@@ -257,7 +255,7 @@ def test_merge_pdfs(temp_dir: Path, sample_pdf: str) -> None:
 
     # Merge PDFs
     output_name = "merged.pdf"
-    merge_pdfs(temp_dir, output_name)
+    pdf_module.merge(temp_dir, output_name)
 
     # Check if merged PDF exists
     merged_path = temp_dir / output_name
@@ -308,7 +306,7 @@ def test_merge_pdfs_content_preservation(
     assert isinstance(content_text, str)
 
     # Merge PDFs
-    merged_path = merge_pdfs(temp_dir, "merged.pdf")
+    merged_path = pdf_module.merge(temp_dir, "merged.pdf")
     assert merged_path is not None
 
     # Read merged PDF content
@@ -322,7 +320,7 @@ def test_merge_pdfs_content_preservation(
 
 def test_merge_pdfs_no_files(temp_dir: Path) -> None:
     """Test PDF merging with no input files."""
-    merged_path = merge_pdfs(temp_dir, "merged.pdf")
+    merged_path = pdf_module.merge(temp_dir, "merged.pdf")
     assert merged_path is None
 
 
@@ -335,7 +333,7 @@ def test_merge_pdfs_single_file(temp_dir: Path, sample_pdf: str) -> None:
         file.write(src.read())
 
     # Merge PDFs
-    merged_path = merge_pdfs(temp_dir, "merged.pdf")
+    merged_path = pdf_module.merge(temp_dir, "merged.pdf")
     assert merged_path is not None
 
     # Verify merged PDF exists and is valid
@@ -372,7 +370,7 @@ def test_merge_pdfs_duplicate_filenames(temp_dir: Path, sample_pdf: str) -> None
             dst.write(content)
 
     # Merge PDFs
-    merge_pdfs(temp_dir, "merged.pdf")
+    pdf_module.merge(temp_dir, "merged.pdf")
 
     # Should create merged_2.pdf
     assert (temp_dir / "merged_2.pdf").exists()
@@ -390,7 +388,7 @@ def test_merge_pdfs_non_pdf_files(temp_dir: Path, sample_pdf: str) -> None:
     (temp_dir / "test.doc").touch()
 
     # Merge PDFs
-    merge_pdfs(temp_dir, "merged.pdf")
+    pdf_module.merge(temp_dir, "merged.pdf")
 
     # Check merged PDF only includes PDF files
     reader = PdfReader(str(temp_dir / "merged.pdf"))
@@ -426,7 +424,7 @@ def test_page_number_calculation(temp_dir: Path, multi_page_pdf: str) -> None:
         os.unlink(temp_file.name)
 
     # Merge PDFs
-    merge_pdfs(temp_dir)
+    pdf_module.merge(temp_dir)
     merged_path = temp_dir / "merged_pdfs.pdf"
 
     # Read merged PDF

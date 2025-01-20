@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 
-from sw_core import pdf
+from sw_core import domains
 
 
 def main() -> None:
@@ -39,7 +39,7 @@ def main() -> None:
             print(f"Error: Not a directory: {directory}")
             return
 
-        pdf.merge_pdfs(directory, args.name)
+        domains.pdf.merge(directory, args.name)
 
 
 if __name__ == "__main__":

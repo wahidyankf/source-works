@@ -12,7 +12,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfgen import canvas
 
-from sw_core.file import get_unique_filename
+from sw_core.domains import files
 
 
 def get_string_width(text: str, font_name: str, font_size: int, encoding: str = "utf8") -> float:
@@ -220,7 +220,7 @@ def add_page_numbers(input_path: str, output_path: str, total_pages: int) -> Non
         writer.write(output_file)
 
 
-def merge_pdfs(input_dir: Path, output_name: str = "merged_pdfs.pdf") -> Optional[Path]:
+def merge(input_dir: Path, output_name: str = "merged_pdfs.pdf") -> Optional[Path]:
     """
     Merge all PDFs in the input directory into a single PDF with a table of contents.
     Returns the path to the merged PDF file, or None if no PDFs were found.
@@ -297,7 +297,7 @@ def merge_pdfs(input_dir: Path, output_name: str = "merged_pdfs.pdf") -> Optiona
     # Create output directory if it doesn't exist
     output_path = input_dir / output_name
     if output_path.exists():
-        output_name = get_unique_filename(input_dir, output_name)
+        output_name = files.get_unique_filename(input_dir, output_name)
         output_path = input_dir / output_name
 
     # Write merged PDF to a temporary file first
