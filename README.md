@@ -34,11 +34,11 @@ poetry install
 The tool can be used via command line:
 
 ```bash
-# Merge all PDFs in the current directory
-poetry run python cli.py merge ./path/to/pdfs output.pdf
+# Merge all PDFs in a directory
+poetry run python -m sw_core merge ./path/to/pdfs --name output.pdf
 
 # Get help
-poetry run python cli.py --help
+poetry run python -m sw_core --help
 ```
 
 ## Development
