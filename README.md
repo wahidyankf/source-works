@@ -158,7 +158,7 @@ The project uses GitHub Actions for continuous integration:
 
 - **Environment**:
   - Python 3.12 with Poetry
-  - Node.js 20.x with Yarn
+  - Node.js 20.x with npm
   - Ubuntu latest runner
 
 - **Test Artifacts**:

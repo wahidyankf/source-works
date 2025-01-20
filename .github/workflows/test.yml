@@ -33,20 +33,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install Python dependencies
         run: |
           poetry install --no-interaction
 
       - name: Install Node.js dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Run Python tests
         run: poetry run pytest tests/ -v
 
       - name: Run Node.js tests
-        run: yarn test
+        run: npm test
 
       - name: Upload test results
         if: always()
